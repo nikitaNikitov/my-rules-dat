@@ -1,0 +1,19 @@
+{
+  "geoip": [
+    "ru",
+    "private",
+    "ddos-guard"
+  ],
+  "geosite": [
+    "ru-available-only-inside",
+    "category-entertainment-ru",
+    "category-gov-ru",
+    "mailru-group",
+    "yandex",
+    "vk",
+    "category-ru",
+    "wildberries",
+    "category-ads-all",
+    "win-spy"
+  ]
+}
