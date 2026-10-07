@@ -1,0 +1,43 @@
+name: build
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download runetfreedom files
+        run: |
+          BASE=https://github.com/runetfreedom/russia-v2ray-rules-dat/releases/latest/download
+          curl -fsSL --retry 3 -o full-geoip.dat   $BASE/geoip.dat
+          curl -fsSL --retry 3 -o full-geosite.dat $BASE/geosite.dat
+
+      - name: Filter dat
+        run: python3 filter_dat.py
+
+      - name: Public release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release delete latest --cleanup-tag --yes || true
+          gh release create latest geoip.dat geosite.dat \
+            --title "Geo files $(date -u +%F)" \
+            --notes "Release $(date -u +%FT%TZ)" \
+            --latest
+  keepalive-job:
+    name: Keepalive Workflow
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gautamkrishnar/keepalive-workflow@v2
